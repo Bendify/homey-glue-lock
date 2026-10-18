@@ -1,0 +1,10 @@
+{
+  "name": "se.johan.glue",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Glue Lock app for Homey",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node test/glue.test.js && node test/app.test.js && node test/device.test.js"
+  }
+}

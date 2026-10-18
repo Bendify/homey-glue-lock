@@ -1,0 +1,73 @@
+{
+  "errors": {
+    "noKey": "Du är inte inloggad. Logga in i appens inställningar.",
+    "invalidKey": "Den sparade API-nyckeln gäller inte längre. Logga in igen i appens inställningar.",
+    "invalidCredentials": "Inloggningen misslyckades. Kontrollera användarnamn och lösenord. Använd telefonnumret med landskod (till exempel +46701234567) om du registrerade dig med det, annars e-postadressen.",
+    "missingFields": "Ange både användarnamn och lösenord.",
+    "unexpectedResponse": "Glue svarade på ett sätt som appen inte förväntade sig, så ingen nyckel kunde skapas.",
+    "timeout": "Glue svarade inte i tid. Försök igen.",
+    "network": "Kunde inte nå Glue. Kontrollera internetanslutningen.",
+    "lockOffline": "Offline",
+    "lockFailed": "Låste inte",
+    "http": "Glue avvisade begäran (status {{status}}).",
+    "notConfirmed": "Glue tog emot kommandot, men låset bekräftade inte inom 20 sekunder. Statusen uppdateras om det går igenom senare.",
+    "lockUnreachable": "Låset är offline. Glue-hubben når det inte."
+  },
+  "device": {
+    "offline": "Offline: Glue-hubben når inte låset.",
+    "gone": "Låset finns inte längre i ditt Glue-konto.",
+    "badKey": "Inte inloggad. Logga in igen i appens inställningar.",
+    "status": {
+      "contacting": "Kontaktar Glue-molnet…",
+      "sent": "Kommandot är mottaget. Väntar på låset…",
+      "locked": "Låst {{time}}",
+      "unlocked": "Upplåst {{time}}",
+      "failed": "Misslyckades {{time}}: {{reason}}"
+    }
+  },
+  "events": {
+    "localLock": "Låst (på låset)",
+    "localUnlock": "Upplåst (på låset)",
+    "remoteLock": "Låst (fjärr)",
+    "remoteUnlock": "Upplåst (fjärr)",
+    "pressAndGo": "Låst (Press & Go)",
+    "manualLock": "Låst (för hand)",
+    "manualUnlock": "Upplåst (för hand)"
+  },
+  "settings": {
+    "title": "Glue Lock",
+    "intro": "Logga in med ditt Glue-konto. Lösenordet används bara en gång för att skapa en API-nyckel och sparas aldrig. Bara nyckeln sparas på din Homey.",
+    "loggedIn": "Inloggad. En API-nyckel är sparad på den här Homey.",
+    "loggedOut": "Inte inloggad.",
+    "username": "Telefonnummer eller e-post",
+    "usernameHint": "+46701234567",
+    "password": "Lösenord",
+    "login": "Logga in",
+    "loggingIn": "Loggar in...",
+    "loginDone": "Inloggad. Klicka Testa anslutning för att kontrollera.",
+    "logout": "Logga ut",
+    "logoutDone": "Utloggad. Nyckeln är borttagen från den här Homey. Du kan också återkalla den i ditt Glue-konto.",
+    "test": "Testa anslutning",
+    "testing": "Testar...",
+    "testOk": "Anslutningen fungerar. Hittade lås:",
+    "testFail": "Misslyckades:",
+    "advanced": "Avancerat: ange API-nyckel manuellt",
+    "manualKey": "API-nyckel",
+    "manualKeyHint": "Kräver locks.read och locks.write",
+    "save": "Spara nyckel",
+    "saved": "Nyckeln är sparad. Klicka Testa anslutning för att kontrollera.",
+    "fillBoth": "Ange både användarnamn och lösenord.",
+    "fillKey": "Ange en nyckel först."
+  },
+  "pair": {
+    "title": "Logga in hos Glue",
+    "intro": "Använd ditt Glue-konto. Lösenordet används bara en gång för att skapa en API-nyckel och sparas aldrig.",
+    "username": "Telefonnummer eller e-post",
+    "usernameHint": "+46701234567",
+    "password": "Lösenord",
+    "login": "Logga in",
+    "already": "Du är redan inloggad. Fortsätt för att välja lås, eller logga in igen med ett annat konto.",
+    "continue": "Fortsätt",
+    "loggingIn": "Loggar in..."
+  }
+}

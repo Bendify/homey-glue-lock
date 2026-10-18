@@ -1,0 +1,68 @@
+<style>
+  .glue-login { padding: 0 4px; }
+  .glue-login .homey-form-group { margin-bottom: 16px; }
+  .glue-login .note { margin-bottom: 16px; }
+  .glue-hidden { display: none; }
+</style>
+
+<div class="glue-login">
+  <h1 class="homey-title" data-i18n="pair.title"></h1>
+  <p class="homey-subtitle note" data-i18n="pair.intro"></p>
+
+  <div id="already" class="glue-hidden">
+    <p class="homey-text note" data-i18n="pair.already"></p>
+    <button id="continue" class="homey-button-primary-full" data-i18n="pair.continue"></button>
+    <hr style="margin: 24px 0;">
+  </div>
+
+  <form id="login-form" autocomplete="on">
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="username" data-i18n="pair.username"></label>
+      <input class="homey-form-input" id="username" name="username" type="text"
+             autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="password" data-i18n="pair.password"></label>
+      <input class="homey-form-input" id="password" name="password" type="password"
+             autocomplete="current-password">
+    </div>
+
+    <button id="login" type="submit" class="homey-button-primary-full" data-i18n="pair.login"></button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  (function () {
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      el.textContent = Homey.__(el.getAttribute('data-i18n'));
+    });
+    document.getElementById('username').placeholder = Homey.__('pair.usernameHint');
+
+    Homey.emit('hasKey').then(function (has) {
+      if (has) document.getElementById('already').classList.remove('glue-hidden');
+    }).catch(function () {});
+
+    document.getElementById('continue').addEventListener('click', function () {
+      Homey.nextView();
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      var username = document.getElementById('username').value;
+      var password = document.getElementById('password').value;
+
+      Homey.showLoadingOverlay();
+      Homey.emit('login', { username: username, password: password })
+        .then(function () {
+          document.getElementById('password').value = '';
+          Homey.hideLoadingOverlay();
+          Homey.nextView();
+        })
+        .catch(function (err) {
+          Homey.hideLoadingOverlay();
+          Homey.alert((err && err.message) ? err.message : String(err));
+        });
+    });
+  })();
+</script>

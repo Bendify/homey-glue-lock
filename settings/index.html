@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  <style>
+    .glue-hidden { display: none; }
+    .glue-btn { margin-top: 8px; }
+    details { margin-top: 24px; }
+    summary { cursor: pointer; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1 class="homey-title" data-i18n="settings.title"></h1>
+  <p class="homey-subtitle" data-i18n="settings.intro"></p>
+
+  <p id="state" class="homey-text-small" style="margin: 16px 0;"></p>
+
+  <form id="login-form" autocomplete="on">
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="username" data-i18n="settings.username"></label>
+      <input class="homey-form-input" id="username" name="username" type="text"
+             autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="password" data-i18n="settings.password"></label>
+      <input class="homey-form-input" id="password" name="password" type="password"
+             autocomplete="current-password">
+    </div>
+    <button id="login" type="submit" class="homey-button-primary-full" data-i18n="settings.login"></button>
+  </form>
+
+  <button id="test" class="homey-button-secondary-full glue-btn" data-i18n="settings.test"></button>
+  <button id="logout" class="homey-button-secondary-full glue-btn" data-i18n="settings.logout"></button>
+
+  <p id="status" class="homey-text-small" style="margin-top: 16px; white-space: pre-line;"></p>
+
+  <details>
+    <summary class="homey-text-small" data-i18n="settings.advanced"></summary>
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="apiKey" data-i18n="settings.manualKey"></label>
+      <input class="homey-form-input" id="apiKey" type="password" autocomplete="off">
+      <p class="homey-text-small" data-i18n="settings.manualKeyHint"></p>
+    </div>
+    <button id="save" class="homey-button-secondary-full" data-i18n="settings.save"></button>
+  </details>
+
+  <script type="text/javascript">
+    function onHomeyReady(Homey) {
+      var statusEl = document.getElementById('status');
+      var stateEl = document.getElementById('state');
+
+      function t(key) { return Homey.__(key); }
+      function say(text) { statusEl.textContent = text; }
+
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        el.textContent = t(el.getAttribute('data-i18n'));
+      });
+      document.getElementById('username').placeholder = t('settings.usernameHint');
+
+      function refreshState() {
+        Homey.api('GET', '/status', function (err, result) {
+          var loggedIn = !err && result && result.loggedIn;
+          stateEl.textContent = loggedIn ? t('settings.loggedIn') : t('settings.loggedOut');
+          document.getElementById('logout').classList.toggle('glue-hidden', !loggedIn);
+          document.getElementById('test').classList.toggle('glue-hidden', !loggedIn);
+        });
+      }
+
+      document.getElementById('login-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var usernameEl = document.getElementById('username');
+        var passwordEl = document.getElementById('password');
+        if (!usernameEl.value.trim() || !passwordEl.value) { say(t('settings.fillBoth')); return; }
+
+        say(t('settings.loggingIn'));
+        Homey.api('POST', '/login', { username: usernameEl.value, password: passwordEl.value }, function (err) {
+          passwordEl.value = '';
+          if (err) { say(err.message || String(err)); return; }
+          usernameEl.value = '';
+          say(t('settings.loginDone'));
+          refreshState();
+        });
+      });
+
+      document.getElementById('test').addEventListener('click', function () {
+        say(t('settings.testing'));
+        Homey.api('GET', '/test', function (err, result) {
+          if (err) { say(t('settings.testFail') + ' ' + (err.message || String(err))); return; }
+          var lines = result.locks.map(function (l) { return '• ' + l.name + ' (' + l.status + ')'; });
+          say(t('settings.testOk') + ' ' + result.count + '\n' + lines.join('\n'));
+        });
+      });
+
+      document.getElementById('logout').addEventListener('click', function () {
+        Homey.api('POST', '/logout', {}, function (err) {
+          if (err) { say(err.message || String(err)); return; }
+          say(t('settings.logoutDone'));
+          refreshState();
+        });
+      });
+
+      document.getElementById('save').addEventListener('click', function () {
+        var keyEl = document.getElementById('apiKey');
+        var value = keyEl.value.trim();
+        if (!value) { say(t('settings.fillKey')); return; }
+        Homey.set('apiKey', value, function (err) {
+          if (err) { say(err.message || String(err)); return; }
+          keyEl.value = '';
+          say(t('settings.saved'));
+          refreshState();
+        });
+      });
+
+      refreshState();
+      Homey.ready();
+    }
+  </script>
+</body>
+</html>

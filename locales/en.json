@@ -1,0 +1,73 @@
+{
+  "errors": {
+    "noKey": "You are not logged in. Log in from the app settings.",
+    "invalidKey": "The saved API key is no longer valid. Log in again from the app settings.",
+    "invalidCredentials": "Login failed. Check your username and password. Use your phone number with country code (for example +46701234567) if you registered with it, otherwise your email address.",
+    "missingFields": "Enter both username and password.",
+    "unexpectedResponse": "Glue answered in a way the app did not expect, so no key could be created.",
+    "timeout": "The Glue service did not answer in time. Try again.",
+    "network": "Could not reach the Glue service. Check your internet connection.",
+    "lockOffline": "Offline",
+    "lockFailed": "Did not lock",
+    "http": "Glue refused the request (status {{status}}).",
+    "notConfirmed": "Glue accepted the command, but the lock did not confirm within 20 seconds. The status updates if it goes through later.",
+    "lockUnreachable": "The lock is offline. The Glue hub cannot reach it."
+  },
+  "device": {
+    "offline": "Offline: the Glue hub cannot reach the lock.",
+    "gone": "This lock no longer exists in your Glue account.",
+    "badKey": "Not logged in. Log in again from the app settings.",
+    "status": {
+      "contacting": "Contacting the Glue cloud…",
+      "sent": "Command accepted. Waiting for the lock…",
+      "locked": "Locked {{time}}",
+      "unlocked": "Unlocked {{time}}",
+      "failed": "Failed {{time}}: {{reason}}"
+    }
+  },
+  "events": {
+    "localLock": "Locked (at the lock)",
+    "localUnlock": "Unlocked (at the lock)",
+    "remoteLock": "Locked (remote)",
+    "remoteUnlock": "Unlocked (remote)",
+    "pressAndGo": "Locked (Press & Go)",
+    "manualLock": "Locked (by hand)",
+    "manualUnlock": "Unlocked (by hand)"
+  },
+  "settings": {
+    "title": "Glue Lock",
+    "intro": "Log in with your Glue account. Your password is only used once to create an API key and is never stored. Only the key is saved on your Homey.",
+    "loggedIn": "Logged in. An API key is saved on this Homey.",
+    "loggedOut": "Not logged in.",
+    "username": "Phone number or email",
+    "usernameHint": "+46701234567",
+    "password": "Password",
+    "login": "Log in",
+    "loggingIn": "Logging in...",
+    "loginDone": "Logged in. Use Test connection to check it.",
+    "logout": "Log out",
+    "logoutDone": "Logged out. The key has been removed from this Homey. You can also revoke it in your Glue account.",
+    "test": "Test connection",
+    "testing": "Testing...",
+    "testOk": "Connection works. Locks found:",
+    "testFail": "Failed:",
+    "advanced": "Advanced: enter an API key manually",
+    "manualKey": "API key",
+    "manualKeyHint": "Needs locks.read and locks.write",
+    "save": "Save key",
+    "saved": "The key is saved. Use Test connection to check it.",
+    "fillBoth": "Enter both username and password.",
+    "fillKey": "Enter a key first."
+  },
+  "pair": {
+    "title": "Log in to Glue",
+    "intro": "Use your Glue account. Your password is only used once to create an API key and is never stored.",
+    "username": "Phone number or email",
+    "usernameHint": "+46701234567",
+    "password": "Password",
+    "login": "Log in",
+    "already": "You are already logged in. Continue to choose locks, or log in again with another account.",
+    "continue": "Continue",
+    "loggingIn": "Logging in..."
+  }
+}
