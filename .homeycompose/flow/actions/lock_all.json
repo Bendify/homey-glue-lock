@@ -1,0 +1,11 @@
+{
+  "id": "lock_all",
+  "title": {
+    "en": "Lock all doors",
+    "sv": "Lås alla dörrar"
+  },
+  "hint": {
+    "en": "Locks all Glue locks. After about 20 seconds the app checks the result and fires the trigger 'A lock could not be locked' for every lock that is offline or did not lock. There is intentionally no 'unlock all'.",
+    "sv": "Låser alla Glue-lås. Efter cirka 20 sekunder kontrollerar appen resultatet och utlöser triggern 'Ett lås kunde inte låsas' för varje lås som är offline eller inte låste. Det finns medvetet ingen 'lås upp alla'."
+  }
+}

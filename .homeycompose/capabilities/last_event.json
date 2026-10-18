@@ -1,0 +1,12 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Last event",
+    "sv": "Senaste händelse"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": false,
+  "icon": "/assets/last_event.svg"
+}

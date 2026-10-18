@@ -1,0 +1,25 @@
+{
+  "id": "lock_failed",
+  "title": {
+    "en": "A lock could not be locked",
+    "sv": "Ett lås kunde inte låsas"
+  },
+  "hint": {
+    "en": "Fires after 'Lock all doors' for each lock that is offline, returned an error, or was not locked after about 20 seconds.",
+    "sv": "Utlöses efter 'Lås alla dörrar' för varje lås som är offline, gav fel eller inte var låst efter cirka 20 sekunder."
+  },
+  "tokens": [
+    {
+      "name": "door",
+      "type": "string",
+      "title": { "en": "Door", "sv": "Dörr" },
+      "example": { "en": "Garage front", "sv": "Garage fram" }
+    },
+    {
+      "name": "reason",
+      "type": "string",
+      "title": { "en": "Reason", "sv": "Orsak" },
+      "example": { "en": "offline", "sv": "offline" }
+    }
+  ]
+}

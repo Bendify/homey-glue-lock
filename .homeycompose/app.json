@@ -1,0 +1,48 @@
+{
+  "id": "se.johan.glue",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Glue Lock",
+    "sv": "Glue Lock"
+  },
+  "description": {
+    "en": "Lock and unlock your doors from anywhere",
+    "sv": "Lås och lås upp dina dörrar var du än är"
+  },
+  "category": [
+    "security"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Johan Sjöström"
+  },
+  "brandColor": "#2F6FED",
+  "api": {
+    "getTest": {
+      "method": "GET",
+      "path": "/test"
+    },
+    "getStatus": {
+      "method": "GET",
+      "path": "/status"
+    },
+    "postLogin": {
+      "method": "POST",
+      "path": "/login"
+    },
+    "postLogout": {
+      "method": "POST",
+      "path": "/logout"
+    }
+  }
+}
