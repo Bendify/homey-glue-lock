@@ -11,7 +11,9 @@
     "lockFailed": "Did not lock",
     "http": "Glue refused the request (status {{status}}).",
     "notConfirmed": "Glue accepted the command, but the lock did not confirm within 20 seconds. The status updates if it goes through later.",
-    "lockUnreachable": "The lock is offline. The Glue hub cannot reach it."
+    "lockUnreachable": "The lock is offline. The Glue hub cannot reach it.",
+    "server": "The Glue cloud has a temporary server error (status {{status}}). The lock may be affected, try again in a moment.",
+    "hubUnreachable": "The Glue cloud cannot reach the hub, so the lock cannot be controlled from here right now. Try restarting the hub (unplug it for a moment) or control the lock manually over Bluetooth in the Glue app."
   },
   "device": {
     "offline": "Offline: the Glue hub cannot reach the lock.",
@@ -22,8 +24,10 @@
       "sent": "Command accepted. Waiting for the lock…",
       "locked": "Locked {{time}}",
       "unlocked": "Unlocked {{time}}",
-      "failed": "Failed {{time}}: {{reason}}"
-    }
+      "failed": "Failed {{time}}: {{reason}}",
+      "retrying": "Glue did not answer, trying again…"
+    },
+    "disconnected": "The Glue cloud cannot reach the hub. Restart the hub or use Bluetooth in the Glue app."
   },
   "events": {
     "localLock": "Locked (at the lock)",

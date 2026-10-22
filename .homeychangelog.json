@@ -2,5 +2,11 @@
   "1.0.0": {
     "en": "First release.",
     "sv": "Första versionen."
+  },
+  "1.0.2": {
+    "en": "Fixed app icon"
+  },
+  "1.0.3": {
+    "en": "Fixed app icon"
   }
 }

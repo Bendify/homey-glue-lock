@@ -31,6 +31,7 @@ module.exports = class GlueApp extends Homey.App {
     });
 
     this._lockFailedTrigger = this.homey.flow.getTriggerCard('lock_failed');
+    this._disconnectedTrigger = this.homey.flow.getTriggerCard('lock_disconnected');
     this.homey.flow.getActionCard('lock_all').registerRunListener(() => this.lockAll());
 
     this.homey.setTimeout(() => {
@@ -43,7 +44,12 @@ module.exports = class GlueApp extends Homey.App {
   /** Turns an API error into an error with a message in the user's language. */
   _localize(err) {
     if (err && err.code === 'HTTP') {
-      const localized = new Error(String(this.homey.__('errors.http', { status: err.statusCode || '?' })).replace(/\{\{\s*status\s*\}\}/g, err.statusCode || '?'));
+      const status = err.statusCode || '?';
+      const key = err.statusCode >= 500 ? 'errors.server' : 'errors.http';
+      const text = String(this.homey.__(key, { status })).replace(/\{\{\s*status\s*\}\}/g, status);
+      // A server error carries Glue's own explanation, if it sent one, so problems can be traced.
+      const detail = err.statusCode >= 500 && err.detail ? ` (Glue: ${err.detail})` : '';
+      const localized = new Error(text + detail);
       localized.code = err.code;
       return localized;
     }
@@ -119,6 +125,12 @@ module.exports = class GlueApp extends Homey.App {
       }
     }
     return locks;
+  }
+
+  /** Called by a device that has been disconnected/offline for a while. */
+  notifyDisconnected(door, status) {
+    this.log(`Lock lost connection: ${door} (${status})`);
+    this._disconnectedTrigger.trigger({ door, status }).catch(this.error);
   }
 
   /** Extra polls shortly after a command, since the lock needs a few seconds. */

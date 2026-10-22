@@ -11,7 +11,9 @@
     "lockFailed": "Låste inte",
     "http": "Glue avvisade begäran (status {{status}}).",
     "notConfirmed": "Glue tog emot kommandot, men låset bekräftade inte inom 20 sekunder. Statusen uppdateras om det går igenom senare.",
-    "lockUnreachable": "Låset är offline. Glue-hubben når det inte."
+    "lockUnreachable": "Låset är offline. Glue-hubben når det inte.",
+    "server": "Glue-molnet har ett tillfälligt serverfel (status {{status}}). Låset kan vara påverkat, prova igen om en stund.",
+    "hubUnreachable": "Glue-molnet når inte hubben, så låset kan inte styras härifrån just nu. Prova att starta om hubben (dra ur strömmen en stund) eller styr låset manuellt via Bluetooth i Glue-appen."
   },
   "device": {
     "offline": "Offline: Glue-hubben når inte låset.",
@@ -22,8 +24,10 @@
       "sent": "Kommandot är mottaget. Väntar på låset…",
       "locked": "Låst {{time}}",
       "unlocked": "Upplåst {{time}}",
-      "failed": "Misslyckades {{time}}: {{reason}}"
-    }
+      "failed": "Misslyckades {{time}}: {{reason}}",
+      "retrying": "Glue svarade inte, försöker igen…"
+    },
+    "disconnected": "Glue-molnet når inte hubben. Starta om hubben eller använd Bluetooth i Glue-appen."
   },
   "events": {
     "localLock": "Låst (på låset)",

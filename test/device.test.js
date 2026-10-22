@@ -14,6 +14,7 @@ class FakeDevice {
   getCapabilityValue(c) { return this._caps[c]; }
   registerCapabilityListener(c, fn) { this._listener = fn; }
   getData() { return { id: 'L1' }; }
+  getName() { return 'Ytterdörr'; }
   getAvailable() { return this._available; }
   async setAvailable() { this._available = true; }
   async setUnavailable() { this._available = false; }
@@ -41,6 +42,8 @@ const t = (key, vars) => {
 
 const GlueLockDevice = require('../drivers/lock/device');
 
+const notified = [];
+
 async function makeDevice({ operate, getLocks }) {
   const device = new GlueLockDevice();
   device.homey = {
@@ -53,6 +56,7 @@ async function makeDevice({ operate, getLocks }) {
       api: { operate, getLocks },
       _localize: err => (err.code === 'NETWORK' ? new Error(t('errors.network')) : err),
       refreshSoon: () => {},
+      notifyDisconnected: (door, status) => notified.push([door, status]),
       poll: async () => {},
     },
   };
@@ -134,6 +138,39 @@ const lockObj = (eventType, eventTime, connectionStatus = 'connected') => ({
   assert.strictEqual(d.getAvailable(), false);
   d.applyLock(lockObj('localUnlock', 't1', 'connected'));
   assert.strictEqual(d.getAvailable(), true);
+
+  // 10) 'disconnected' (hub lost wifi) warns, and a 500 from Glue is explained as a hub problem
+  const http500 = () => { throw Object.assign(new Error('raw'), { code: 'HTTP', statusCode: 500 }); };
+  d = await makeDevice({ operate: async () => http500(), getLocks: async () => [] });
+  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  await new Promise(r => setImmediate(r));
+  assert.ok(/cannot reach the hub/i.test(d._warning), d._warning);
+  assert.strictEqual(d.getAvailable(), true);
+  await assert.rejects(d._listener(true), /Glue cloud cannot reach the hub/);
+  assert.ok(/restarting the hub/.test(d._warning));
+  d.applyLock(lockObj('localUnlock', 't1', 'connected'));
+  await new Promise(r => setImmediate(r));
+  assert.strictEqual(d._warning, null);
+
+  // 11) a 500 while the lock is 'connected' is still reported as a server error
+  d = await makeDevice({ operate: async () => http500(), getLocks: async () => [] });
+  d.applyLock(lockObj('localUnlock', 't1', 'connected'));
+  await assert.rejects(d._listener(true), e => e.code === 'HTTP');
+
+  // 12) 'A lock lost its connection' fires once, after two polls in a row, and re-arms on reconnect
+  notified.length = 0;
+  d = await makeDevice({ operate: async () => null, getLocks: async () => [] });
+  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.deepStrictEqual(notified, []);
+  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.deepStrictEqual(notified, [['Ytterdörr', 'disconnected']]);
+  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.strictEqual(notified.length, 1);
+  d.applyLock(lockObj('localUnlock', 't1', 'connected'));
+  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.strictEqual(notified.length, 1); // a single bad poll after reconnect is not enough
+  d.applyLock(lockObj('localUnlock', 't1', 'offline'));
+  assert.deepStrictEqual(notified[1], ['Ytterdörr', 'offline']);
 
   console.log('DEVICE TEST OK');
 })().catch(e => { console.error(e); process.exit(1); });

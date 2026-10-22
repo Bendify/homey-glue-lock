@@ -113,9 +113,13 @@ function fakeDevice(name, { available = true, locked = false, failOp = false } =
   assert.deepStrictEqual(off.results, [[false, 'Offline']]);
   assert.deepStrictEqual(stuck.results, [[false, 'Did not lock']]);
 
-  // HTTP errors keep the status code
-  const e = app._localize(Object.assign(new Error('raw'), { code: 'HTTP', statusCode: 500 }));
-  assert.strictEqual(e.message, 'Glue refused the request (status 500).');
+  // HTTP errors keep the status code; server errors get their own wording
+  const e = app._localize(Object.assign(new Error('raw'), { code: 'HTTP', statusCode: 400 }));
+  assert.strictEqual(e.message, 'Glue refused the request (status 400).');
+  const e5 = app._localize(Object.assign(new Error('raw'), { code: 'HTTP', statusCode: 500 }));
+  assert.ok(e5.message.includes('temporary server error (status 500)'), e5.message);
+  const e5d = app._localize(Object.assign(new Error('raw'), { code: 'HTTP', statusCode: 500, detail: 'lock busy' }));
+  assert.ok(e5d.message.endsWith('(Glue: lock busy)'), e5d.message);
 
   console.log('APP SMOKE TEST OK');
 })().catch(e => { console.error(e); process.exit(1); });

@@ -62,6 +62,28 @@ const KEY = 'k'.repeat(108);
   await assert.rejects(new GlueApi(() => '').getLocks(), e => e.code === 'NO_KEY');
   await assert.rejects(new GlueApi(() => 'good').operate('a', 'open'), e => e.code === 'BAD_ACTION');
 
+  // operate retries temporary server errors, but not client errors
+  let posts = 0;
+  responder = () => { posts++; return posts < 3 ? { status: 500, payload: 'boom' } : { status: 202, payload: undefined }; };
+  const seen = [];
+  const retrying = new GlueApi(() => 'good', { retryDelays: [1, 1] });
+  assert.strictEqual(await retrying.operate('a', 'lock', { onRetry: n => seen.push(n) }), null);
+  assert.strictEqual(posts, 3);
+  assert.deepStrictEqual(seen, [1, 2]);
+
+  posts = 0;
+  responder = () => { posts++; return { status: 500, payload: 'boom' }; };
+  await assert.rejects(retrying.operate('a', 'lock'), e => e.code === 'HTTP' && e.statusCode === 500);
+  assert.strictEqual(posts, 3); // first try + two retries
+
+  posts = 0;
+  responder = () => { posts++; return { status: 400, payload: 'bad' }; };
+  await assert.rejects(retrying.operate('a', 'lock'), e => e.code === 'HTTP' && e.statusCode === 400);
+  assert.strictEqual(posts, 1);
+
+  responder = () => ({ status: 401, payload: '' });
+  await assert.rejects(retrying.operate('a', 'lock'), e => e.code === 'INVALID_KEY');
+
   // createApiKey: success, sends Basic auth and scopes
   responder = () => ({ status: 200, payload: { id: 'x', apiKey: KEY } });
   const api = new GlueApi(() => null);

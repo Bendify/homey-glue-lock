@@ -1,0 +1,37 @@
+{
+  "id": "lock_disconnected",
+  "title": {
+    "en": "A lock lost its connection",
+    "sv": "Ett lås tappade anslutningen"
+  },
+  "hint": {
+    "en": "Fires once when a lock has been disconnected or offline for about two minutes, usually because the Glue hub lost its wifi. Does not fire again until the lock has been connected in between.",
+    "sv": "Utlöses en gång när ett lås varit frånkopplat eller offline i ungefär två minuter, oftast för att Glue-hubben tappat wifi. Utlöses inte igen förrän låset varit anslutet emellan."
+  },
+  "tokens": [
+    {
+      "name": "door",
+      "type": "string",
+      "title": {
+        "en": "Door",
+        "sv": "Dörr"
+      },
+      "example": {
+        "en": "Front door",
+        "sv": "Ytterdörr"
+      }
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "title": {
+        "en": "Status",
+        "sv": "Status"
+      },
+      "example": {
+        "en": "disconnected",
+        "sv": "disconnected"
+      }
+    }
+  ]
+}

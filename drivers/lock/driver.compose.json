@@ -17,9 +17,9 @@
     "cloud"
   ],
   "images": {
-    "small": "/drivers/lock/assets/images/small.png",
-    "large": "/drivers/lock/assets/images/large.png",
-    "xlarge": "/drivers/lock/assets/images/xlarge.png"
+    "small": "/drivers/lock/assets/images/small.jpg",
+    "large": "/drivers/lock/assets/images/large.jpg",
+    "xlarge": "/drivers/lock/assets/images/xlarge.jpg"
   },
   "pair": [
     {

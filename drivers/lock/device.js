@@ -7,6 +7,8 @@ const CONFIRM_TIMEOUT_MS = 20 * 1000;
 const POLL_EVERY_MS = 2 * 1000;
 const ASSUME_AFTER_MS = 6 * 1000;
 const WARNING_TTL_MS = 10 * 60 * 1000;
+// Polls (one per minute) in a row a lock must be disconnected/offline before the flow trigger fires.
+const DISCONNECT_POLLS = 2;
 
 // Glue reports 'connected', 'disconnected' and 'offline'. Only 'offline' is treated as
 // unreachable. For 'disconnected' the command is still attempted and its result confirmed.
@@ -74,7 +76,11 @@ module.exports = class GlueLockDevice extends Homey.Device {
 
   _succeed(locked) {
     if (this._warnTimer) this.homey.clearTimeout(this._warnTimer);
-    this.unsetWarning().catch(this.error);
+    if (this._connection === 'disconnected') {
+      this.setWarning(this._t('device.disconnected')).catch(this.error);
+    } else {
+      this.unsetWarning().catch(this.error);
+    }
     const key = locked ? 'device.status.locked' : 'device.status.unlocked';
     this._setStatus(this._t(key, { time: this._time() }));
   }
@@ -99,9 +105,16 @@ module.exports = class GlueLockDevice extends Homey.Device {
 
     await this._setStatus(this.homey.__('device.status.contacting'));
     try {
-      await this.homey.app.api.operate(this.getData().id, type);
+      await this.homey.app.api.operate(this.getData().id, type, {
+        onRetry: () => this._setStatus(this._t('device.status.retrying')),
+      });
     } catch (err) {
-      const localized = this.homey.app._localize(err);
+      const hubDown = err.code === 'HTTP' && err.statusCode >= 500
+        && this._connection && this._connection !== 'connected';
+      const localized = hubDown
+        ? new Error(this._t('errors.hubUnreachable'))
+        : this.homey.app._localize(err);
+      this.error(`Command ${type} failed:`, err.code, err.statusCode || '', err.detail || err.message);
       this._fail(localized.message);
       throw localized;
     }
@@ -158,6 +171,19 @@ module.exports = class GlueLockDevice extends Homey.Device {
 
   /** Updates the device from a lock object returned by GET /v1/locks. */
   applyLock(lock) {
+    const previous = this._connection;
+    this._connection = String(lock.connectionStatus).toLowerCase();
+
+    // Fire 'A lock lost its connection' once per outage, after a couple of polls in a row.
+    if (this._connection === 'disconnected' || this._connection === 'offline') {
+      this._downPolls = (this._downPolls || 0) + 1;
+      if (this._downPolls === DISCONNECT_POLLS) {
+        this.homey.app.notifyDisconnected(this.getName(), this._connection);
+      }
+    } else if (this._connection === 'connected') {
+      this._downPolls = 0;
+    }
+
     if (isOffline(lock)) {
       if (this.getAvailable()) {
         this.setUnavailable(this.homey.__('device.offline')).catch(this.error);
@@ -167,6 +193,14 @@ module.exports = class GlueLockDevice extends Homey.Device {
 
     if (!this.getAvailable()) {
       this.setAvailable().catch(this.error);
+    }
+
+    // 'disconnected' usually means the Glue hub has lost its connection (wifi). Commands
+    // can still be tried, but the lock may not be reachable, so say so.
+    if (this._connection === 'disconnected' && previous !== 'disconnected') {
+      this.setWarning(this._t('device.disconnected')).catch(this.error);
+    } else if (this._connection === 'connected' && previous === 'disconnected') {
+      this.unsetWarning().catch(this.error);
     }
 
     if (typeof lock.batteryStatus === 'number') {

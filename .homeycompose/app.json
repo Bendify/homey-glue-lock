@@ -1,6 +1,6 @@
 {
   "id": "se.johan.glue",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -19,9 +19,9 @@
   ],
   "permissions": [],
   "images": {
-    "small": "/assets/images/small.png",
-    "large": "/assets/images/large.png",
-    "xlarge": "/assets/images/xlarge.png"
+    "small": "/assets/images/small.jpg",
+    "large": "/assets/images/large.jpg",
+    "xlarge": "/assets/images/xlarge.jpg"
   },
   "author": {
     "name": "Johan Sjöström"
@@ -44,5 +44,11 @@
       "method": "POST",
       "path": "/logout"
     }
-  }
+  },
+  "support": "https://github.com/Bendify/homey-glue-lock/issues",
+  "source": "https://github.com/Bendify/homey-glue-lock",
+  "bugs": {
+    "url": "https://github.com/Bendify/homey-glue-lock/issues"
+  },
+  "homepage": "https://github.com/Bendify/homey-glue-lock"
 }
