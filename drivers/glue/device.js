@@ -7,8 +7,9 @@ const CONFIRM_TIMEOUT_MS = 20 * 1000;
 const POLL_EVERY_MS = 2 * 1000;
 const ASSUME_AFTER_MS = 6 * 1000;
 const WARNING_TTL_MS = 10 * 60 * 1000;
-// Polls (one per minute) in a row a lock must be disconnected/offline before the flow trigger fires.
-const DISCONNECT_POLLS = 2;
+// Minutes a lock must be disconnected/offline before the 'lost its connection' trigger fires.
+// The flow card has a dropdown with these values; each one fires once per outage.
+const DISCONNECT_MINUTES = [2, 5, 10, 15, 30, 60];
 
 // Glue reports 'connected', 'disconnected' and 'offline'. Only 'offline' is treated as
 // unreachable. For 'disconnected' the command is still attempted and its result confirmed.
@@ -24,6 +25,7 @@ module.exports = class GlueLockDevice extends Homey.Device {
     }
 
     // Overridable for tests.
+    this._now = () => Date.now();
     this._confirmTimeoutMs = CONFIRM_TIMEOUT_MS;
     this._pollEveryMs = POLL_EVERY_MS;
     this._assumeAfterMs = ASSUME_AFTER_MS;
@@ -174,14 +176,24 @@ module.exports = class GlueLockDevice extends Homey.Device {
     const previous = this._connection;
     this._connection = String(lock.connectionStatus).toLowerCase();
 
-    // Fire 'A lock lost its connection' once per outage, after a couple of polls in a row.
+    // Fire 'A lock lost its connection' once per outage and chosen delay. Time based,
+    // since extra polls after commands would otherwise make a poll count unreliable.
     if (this._connection === 'disconnected' || this._connection === 'offline') {
-      this._downPolls = (this._downPolls || 0) + 1;
-      if (this._downPolls === DISCONNECT_POLLS) {
-        this.homey.app.notifyDisconnected(this.getName(), this._connection);
+      const now = this._now();
+      if (!this._downSince) {
+        this._downSince = now;
+        this._firedMinutes = new Set();
+      }
+      const minutes = (now - this._downSince) / 60000;
+      for (const m of DISCONNECT_MINUTES) {
+        if (minutes >= m && !this._firedMinutes.has(m)) {
+          this._firedMinutes.add(m);
+          this.homey.app.notifyDisconnected(this.getName(), this._connection, m);
+        }
       }
     } else if (this._connection === 'connected') {
-      this._downPolls = 0;
+      this._downSince = null;
+      this._firedMinutes = null;
     }
 
     if (isOffline(lock)) {

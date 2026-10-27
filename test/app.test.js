@@ -121,5 +121,17 @@ function fakeDevice(name, { available = true, locked = false, failOp = false } =
   const e5d = app._localize(Object.assign(new Error('raw'), { code: 'HTTP', statusCode: 500, detail: 'lock busy' }));
   assert.ok(e5d.message.endsWith('(Glue: lock busy)'), e5d.message);
 
+  // key from the previous GlueLock app is reused, but never overwrites a newer key
+  let m = makeApp();
+  m.store.GlueLockAuth = ' old-key ';
+  m.app._migrateLegacyKey();
+  assert.strictEqual(m.store.apiKey, 'old-key');
+  assert.strictEqual(m.app.hasKey(), true);
+  m = makeApp();
+  m.store.GlueLockAuth = 'old-key';
+  m.store.apiKey = 'new-key';
+  m.app._migrateLegacyKey();
+  assert.strictEqual(m.store.apiKey, 'new-key');
+
   console.log('APP SMOKE TEST OK');
 })().catch(e => { console.error(e); process.exit(1); });

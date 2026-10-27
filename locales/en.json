@@ -61,7 +61,8 @@
     "save": "Save key",
     "saved": "The key is saved. Use Test connection to check it.",
     "fillBoth": "Enter both username and password.",
-    "fillKey": "Enter a key first."
+    "fillKey": "Enter a key first.",
+    "credit": "Originally created by Kim Kokholm. Thank you, Kim, for building the first Glue Lock app for Homey."
   },
   "pair": {
     "title": "Log in to Glue",

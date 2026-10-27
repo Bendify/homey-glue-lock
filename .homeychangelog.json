@@ -8,5 +8,16 @@
   },
   "1.0.3": {
     "en": "Fixed app icon"
+  },
+  "1.1.0": {
+    "en": "New maintainer. Thank you to Kim Kokholm, who created this app and handed it over. Rebuilt on Glue's current API: status, battery, last event, retries, a Lock all doors action and a trigger when a lock loses its connection. Existing devices and your saved key keep working.",
+    "sv": "Ny underhållare. Tack till Kim Kokholm som skapade appen och lämnade över den. Ombyggd på Glues nuvarande API: status, batteri, senaste händelse, nya försök, åtgärden Lås alla dörrar och en trigger när ett lås tappar anslutningen. Befintliga enheter och din sparade nyckel fungerar som förut."
+  },
+  "1.1.1": {
+    "en": "Darker app color.",
+    "sv": "Mörkare appfärg."
+  },
+  "1.1.2": {
+    "en": "Darker app color."
   }
 }

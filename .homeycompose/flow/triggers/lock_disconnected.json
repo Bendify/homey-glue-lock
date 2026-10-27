@@ -5,8 +5,8 @@
     "sv": "Ett lås tappade anslutningen"
   },
   "hint": {
-    "en": "Fires once when a lock has been disconnected or offline for about two minutes, usually because the Glue hub lost its wifi. Does not fire again until the lock has been connected in between.",
-    "sv": "Utlöses en gång när ett lås varit frånkopplat eller offline i ungefär två minuter, oftast för att Glue-hubben tappat wifi. Utlöses inte igen förrän låset varit anslutet emellan."
+    "en": "Fires once when a lock has been disconnected or offline for the chosen time, usually because the Glue hub lost its wifi. Does not fire again until the lock has been connected in between.",
+    "sv": "Utlöses en gång när ett lås varit frånkopplat eller offline så länge du valt, oftast för att Glue-hubben tappat wifi. Utlöses inte igen förrän låset varit anslutet emellan."
   },
   "tokens": [
     {
@@ -33,5 +33,63 @@
         "sv": "disconnected"
       }
     }
-  ]
+  ],
+  "args": [
+    {
+      "type": "dropdown",
+      "name": "minutes",
+      "title": {
+        "en": "After",
+        "sv": "Efter"
+      },
+      "values": [
+        {
+          "id": "2",
+          "label": {
+            "en": "2 minutes",
+            "sv": "2 minuter"
+          }
+        },
+        {
+          "id": "5",
+          "label": {
+            "en": "5 minutes",
+            "sv": "5 minuter"
+          }
+        },
+        {
+          "id": "10",
+          "label": {
+            "en": "10 minutes",
+            "sv": "10 minuter"
+          }
+        },
+        {
+          "id": "15",
+          "label": {
+            "en": "15 minutes",
+            "sv": "15 minuter"
+          }
+        },
+        {
+          "id": "30",
+          "label": {
+            "en": "30 minutes",
+            "sv": "30 minuter"
+          }
+        },
+        {
+          "id": "60",
+          "label": {
+            "en": "60 minutes",
+            "sv": "60 minuter"
+          }
+        }
+      ]
+    }
+  ],
+  "titleFormatted": {
+    "en": "A lock lost its connection for [[minutes]]",
+    "sv": "Ett lås tappade anslutningen i [[minutes]]"
+  }
 }

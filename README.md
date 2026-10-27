@@ -18,3 +18,7 @@ homey app validate --level publish
 ```
 
 The unofficial Glue API is documented only informally. This project is not affiliated with Glue.
+
+## Credits
+
+Originally created by Kim Kokholm (HarpunDK/Homey.Glue, GPL-3.0), who handed the app over to its current maintainer. Thank you, Kim.

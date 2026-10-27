@@ -40,7 +40,7 @@ const t = (key, vars) => {
   return s;
 };
 
-const GlueLockDevice = require('../drivers/lock/device');
+const GlueLockDevice = require('../drivers/glue/device');
 
 const notified = [];
 
@@ -56,7 +56,7 @@ async function makeDevice({ operate, getLocks }) {
       api: { operate, getLocks },
       _localize: err => (err.code === 'NETWORK' ? new Error(t('errors.network')) : err),
       refreshSoon: () => {},
-      notifyDisconnected: (door, status) => notified.push([door, status]),
+      notifyDisconnected: (door, status, minutes) => notified.push(minutes === undefined ? [door, status] : [door, status, minutes]),
       poll: async () => {},
     },
   };
@@ -157,20 +157,27 @@ const lockObj = (eventType, eventTime, connectionStatus = 'connected') => ({
   d.applyLock(lockObj('localUnlock', 't1', 'connected'));
   await assert.rejects(d._listener(true), e => e.code === 'HTTP');
 
-  // 12) 'A lock lost its connection' fires once, after two polls in a row, and re-arms on reconnect
+  // 12) 'A lock lost its connection' fires once per chosen delay and re-arms on reconnect
   notified.length = 0;
   d = await makeDevice({ operate: async () => null, getLocks: async () => [] });
+  let clock = 1000000;
+  d._now = () => clock;
+  const min = n => { clock += n * 60000; };
   d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  min(1); d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
   assert.deepStrictEqual(notified, []);
-  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
-  assert.deepStrictEqual(notified, [['Ytterdörr', 'disconnected']]);
-  d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  min(1); d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.deepStrictEqual(notified, [['Ytterdörr', 'disconnected', 2]]);
+  min(0.2); d.applyLock(lockObj('localUnlock', 't1', 'disconnected')); // extra poll: no repeat
   assert.strictEqual(notified.length, 1);
+  min(3); d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.deepStrictEqual(notified[1], ['Ytterdörr', 'disconnected', 5]);
+  min(5); d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.deepStrictEqual(notified[2], ['Ytterdörr', 'disconnected', 10]);
   d.applyLock(lockObj('localUnlock', 't1', 'connected'));
   d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
-  assert.strictEqual(notified.length, 1); // a single bad poll after reconnect is not enough
-  d.applyLock(lockObj('localUnlock', 't1', 'offline'));
-  assert.deepStrictEqual(notified[1], ['Ytterdörr', 'offline']);
+  min(1); d.applyLock(lockObj('localUnlock', 't1', 'disconnected'));
+  assert.strictEqual(notified.length, 3); // new outage starts counting from zero
 
   console.log('DEVICE TEST OK');
 })().catch(e => { console.error(e); process.exit(1); });

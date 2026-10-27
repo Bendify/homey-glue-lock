@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- The '/homey.js' script must be included in your settings view to work -->
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+</head>
+
+<body>
+    <header class="homey-header">
+        <h1 class="homey-title" data-i18n="settings.title">
+            <!-- This will be filled with the translated string with key 'settings.title'. -->
+        </h1>
+        <p class="homey-subtitle" data-i18n="settings.subtitle">
+            <!-- This field will also be translated -->
+        </p>
+    </header>
+
+    <fieldset class="homey-form-fieldset">
+        <legend class="homey-form-legend">GlueLock Settings</legend>
+
+        <div class="homey-form-group">
+            <label class="homey-form-label" for="inputAuthValue">AUTH Key</label>
+            <input class="homey-form-input" id="inputAuthValue" type="text" value="" placeholder="Insert Auth-key here" />
+            <small class="text-muted">See guide at GitHub, otherwise contact me maybe.</small>
+        </div>
+
+    </fieldset>
+
+    <button id="save" class="homey-button-primary-full">Save changes</button>
+
+    <script type="text/javascript">
+        // a method named 'onHomeyReady' must be present in your code
+        function onHomeyReady(Homey) {
+            // Tell Homey we're ready to be displayed
+            Homey.ready();
+
+            var inputAuthValueElement    = document.getElementById("inputAuthValue");
+            var saveElement = document.getElementById("save");
+
+            Homey.get("GlueLockAuth", function (err, auth) {
+                if (err) return Homey.alert(err);
+                inputAuthValueElement.value = auth;
+            });
+
+            saveElement.addEventListener("click", function (e) {
+                var anySaveErrors = false;
+
+                Homey.set("GlueLockAuth", inputAuthValueElement.value, function (err) {
+                    if (err) {
+                        anySaveErrors = true;
+                        return Homey.alert(err);
+                    } 
+                });
+                
+                if (!anySaveErrors)
+                    return Homey.alert("Settings saved. You can close this dialog now.");
+                else
+                    return Homey.alert("Error occured.");
+
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -18,6 +18,7 @@ const ERROR_KEYS = {
 module.exports = class GlueApp extends Homey.App {
 
   async onInit() {
+    this._migrateLegacyKey();
     this.api = new GlueApi(() => this.homey.settings.get('apiKey'));
 
     // One request every minute updates all locks.
@@ -32,6 +33,10 @@ module.exports = class GlueApp extends Homey.App {
 
     this._lockFailedTrigger = this.homey.flow.getTriggerCard('lock_failed');
     this._disconnectedTrigger = this.homey.flow.getTriggerCard('lock_disconnected');
+    // Each flow picks how many minutes a lock must be down; flows without a choice use 10.
+    this._disconnectedTrigger.registerRunListener(async (args, state) => (
+      Number(args.minutes || 10) === state.minutes
+    ));
     this.homey.flow.getActionCard('lock_all').registerRunListener(() => this.lockAll());
 
     this.homey.setTimeout(() => {
@@ -61,7 +66,19 @@ module.exports = class GlueApp extends Homey.App {
   }
 
   _devices() {
-    return this.homey.drivers.getDriver('lock').getDevices();
+    return this.homey.drivers.getDriver('glue').getDevices();
+  }
+
+  /**
+   * This app took over the existing GlueLock app (com.gluelock.lock), which stored the
+   * API key under 'GlueLockAuth'. Reuse it so existing users do not have to log in again.
+   */
+  _migrateLegacyKey() {
+    const legacy = this.homey.settings.get('GlueLockAuth');
+    if (legacy && !this.homey.settings.get('apiKey')) {
+      this.homey.settings.set('apiKey', String(legacy).trim());
+      this.log('Migrated API key from the previous GlueLock app');
+    }
   }
 
   hasKey() {
@@ -128,9 +145,9 @@ module.exports = class GlueApp extends Homey.App {
   }
 
   /** Called by a device that has been disconnected/offline for a while. */
-  notifyDisconnected(door, status) {
-    this.log(`Lock lost connection: ${door} (${status})`);
-    this._disconnectedTrigger.trigger({ door, status }).catch(this.error);
+  notifyDisconnected(door, status, minutes = 10) {
+    this.log(`Lock lost connection: ${door} (${status}) for ${minutes} min`);
+    this._disconnectedTrigger.trigger({ door, status }, { minutes }).catch(this.error);
   }
 
   /** Extra polls shortly after a command, since the lock needs a few seconds. */

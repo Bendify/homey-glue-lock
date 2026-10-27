@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
-  "id": "se.johan.glue",
-  "version": "1.0.3",
+  "id": "com.gluelock.lock",
+  "version": "1.1.2",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -27,7 +27,7 @@
   "author": {
     "name": "Johan Sjöström"
   },
-  "brandColor": "#2F6FED",
+  "brandColor": "#000000",
   "api": {
     "getTest": {
       "method": "GET",
@@ -52,6 +52,14 @@
     "url": "https://github.com/Bendify/homey-glue-lock/issues"
   },
   "homepage": "https://github.com/Bendify/homey-glue-lock",
+  "contributors": {
+    "developers": [
+      {
+        "name": "Kim Kokholm"
+      }
+    ]
+  },
+  "homeyCommunityTopicId": 96144,
   "flow": {
     "triggers": [
       {
@@ -61,8 +69,8 @@
           "sv": "Ett lås tappade anslutningen"
         },
         "hint": {
-          "en": "Fires once when a lock has been disconnected or offline for about two minutes, usually because the Glue hub lost its wifi. Does not fire again until the lock has been connected in between.",
-          "sv": "Utlöses en gång när ett lås varit frånkopplat eller offline i ungefär två minuter, oftast för att Glue-hubben tappat wifi. Utlöses inte igen förrän låset varit anslutet emellan."
+          "en": "Fires once when a lock has been disconnected or offline for the chosen time, usually because the Glue hub lost its wifi. Does not fire again until the lock has been connected in between.",
+          "sv": "Utlöses en gång när ett lås varit frånkopplat eller offline så länge du valt, oftast för att Glue-hubben tappat wifi. Utlöses inte igen förrän låset varit anslutet emellan."
         },
         "tokens": [
           {
@@ -89,7 +97,65 @@
               "sv": "disconnected"
             }
           }
-        ]
+        ],
+        "args": [
+          {
+            "type": "dropdown",
+            "name": "minutes",
+            "title": {
+              "en": "After",
+              "sv": "Efter"
+            },
+            "values": [
+              {
+                "id": "2",
+                "label": {
+                  "en": "2 minutes",
+                  "sv": "2 minuter"
+                }
+              },
+              {
+                "id": "5",
+                "label": {
+                  "en": "5 minutes",
+                  "sv": "5 minuter"
+                }
+              },
+              {
+                "id": "10",
+                "label": {
+                  "en": "10 minutes",
+                  "sv": "10 minuter"
+                }
+              },
+              {
+                "id": "15",
+                "label": {
+                  "en": "15 minutes",
+                  "sv": "15 minuter"
+                }
+              },
+              {
+                "id": "30",
+                "label": {
+                  "en": "30 minutes",
+                  "sv": "30 minuter"
+                }
+              },
+              {
+                "id": "60",
+                "label": {
+                  "en": "60 minutes",
+                  "sv": "60 minuter"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "A lock lost its connection for [[minutes]]",
+          "sv": "Ett lås tappade anslutningen i [[minutes]]"
+        }
       },
       {
         "id": "lock_failed",
@@ -163,9 +229,9 @@
         "cloud"
       ],
       "images": {
-        "small": "/drivers/lock/assets/images/small.jpg",
-        "large": "/drivers/lock/assets/images/large.jpg",
-        "xlarge": "/drivers/lock/assets/images/xlarge.jpg"
+        "small": "/drivers/glue/assets/images/small.jpg",
+        "large": "/drivers/glue/assets/images/large.jpg",
+        "xlarge": "/drivers/glue/assets/images/xlarge.jpg"
       },
       "pair": [
         {
@@ -194,7 +260,7 @@
           "AA"
         ]
       },
-      "id": "lock"
+      "id": "glue"
     }
   ],
   "capabilities": {

@@ -1,0 +1,39 @@
+{
+  "id": "com.gluelock.lock",
+  "version": "1.0.6",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "GlueLock"
+  },
+  "description": {
+    "en": "A simple, super-smart motorised lock that manages your door."
+  },
+  "category": [
+    "appliances"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Kim Kokholm",
+    "email": "kokholm@gmail.com"
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "KimKokholm"
+      }
+    }
+  },
+  "brandColor": "#28323f",
+  "source": "https://github.com/HarpunDK/Homey.Glue",
+  "support": "https://github.com/HarpunDK/Homey.Glue",
+  "homeyCommunityTopicId": 96144
+}

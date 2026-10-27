@@ -61,7 +61,8 @@
     "save": "Spara nyckel",
     "saved": "Nyckeln är sparad. Klicka Testa anslutning för att kontrollera.",
     "fillBoth": "Ange både användarnamn och lösenord.",
-    "fillKey": "Ange en nyckel först."
+    "fillKey": "Ange en nyckel först.",
+    "credit": "Ursprungligen skapad av Kim Kokholm. Tack Kim för att du byggde den första Glue Lock-appen till Homey."
   },
   "pair": {
     "title": "Logga in hos Glue",
